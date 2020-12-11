@@ -3,6 +3,11 @@ set -e
 
 ######
 
+echo "AWS configuration..."
+aws configure set default.region "${INPUT_LAMBDA_REGION}"
+
+######
+
 echo "Installing dependencies..."
 mkdir dependencies
 pip install --target=dependencies -r "${INPUT_REQUIREMENTS_TXT}"
