@@ -5,10 +5,11 @@ description: Deploy python 3.8 code to AWS Lambda with separate dependencies lay
 inputs:
   lambda_region:
     description: 'Lambda AWS Region'
+    required: false
     default: 'us-east-1'
   requirements_txt:
     description: Requirements file name
-    required: true
+    required: false
     default: 'requirements.txt'
   lambda_layer_arn:
     description: Lambda layer's ARN for dependencies
