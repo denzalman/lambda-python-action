@@ -10,15 +10,15 @@ echo "OK"
 ######
 
 echo "Installing dependencies..."
-mkdir dependencies
+mkdir dependencies > /dev/null 2>&1
 pip install --target=python -r "${INPUT_REQUIREMENTS_TXT}" > /dev/null 2>&1
 echo "OK"
 
 ######
 
 echo "Zipping dependencies..."
-zip -r python.zip ./python
-rm -rf python
+zip -r python.zip ./python > /dev/null 2>&1
+rm -rf python > /dev/null 2>&1
 echo "OK"
 
 ######
@@ -26,13 +26,13 @@ echo "OK"
 echo "Publishing dependencies layer..."
 response=$(aws lambda publish-layer-version --compatible-runtimes python3.8 --layer-name "${INPUT_LAMBDA_LAYER_ARN}" --zip-file fileb://python.zip)
 VERSION=$(echo $response | jq '.Version')
-rm python.zip
+rm python.zip > /dev/null 2>&1
 echo "OK"
 
 ######
 
 echo "Deploying lambda main code..."
-zip -r lambda.zip . -x \*.git\*
+zip -r lambda.zip . -x \*.git\* > /dev/null 2>&1
 aws lambda update-function-code --function-name "${INPUT_LAMBDA_FUNCTION_NAME}" --zip-file fileb://lambda.zip > /dev/null 2>&1
 echo "OK"
 
