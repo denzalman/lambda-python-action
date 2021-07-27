@@ -38,7 +38,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Deploy code to Lambda
-      uses: denzalman/lambda-python-action@v1.0.5
+      uses: denzalman/lambda-python-action@v1.0.7
       with:
         lambda_layer_arn: 'arn:aws:lambda:us-east-1:123456789012:layer:lambda-layer'
         lambda_function_name: 'my-lambda-function-name'
