@@ -10,20 +10,20 @@ aws configure set default.region "${INPUT_LAMBDA_REGION}"
 
 echo "Installing dependencies..."
 mkdir dependencies
-pip install --target=dependencies -r "${INPUT_REQUIREMENTS_TXT}"
+pip install --target=python -r "${INPUT_REQUIREMENTS_TXT}"
 
 ######
 
 echo "Zipping dependencies..."
-zip -r dependencies.zip ./dependencies
-rm -rf dependencies
+zip -r python.zip ./python
+rm -rf python
 
 ######
 
 echo "Publishing dependencies layer..."
-response=$(aws lambda publish-layer-version --layer-name "${INPUT_LAMBDA_LAYER_ARN}" --zip-file fileb://dependencies.zip)
+response=$(aws lambda publish-layer-version --layer-name "${INPUT_LAMBDA_LAYER_ARN}" --zip-file fileb://python.zip)
 VERSION=$(echo $response | jq '.Version')
-rm dependencies.zip
+rm python.zip
 
 ######
 
