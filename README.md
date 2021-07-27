@@ -38,10 +38,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Deploy code to Lambda
-      uses: denzalman/lambda-python-action@v1.0.1
+      uses: denzalman/lambda-python-action@v1.0.3
       with:
         lambda_layer_arn: 'arn:aws:lambda:us-east-1:123456789012:layer:lambda-layer'
-        lambda_name: 'my-lambda-function-name'
+        lambda_function_name: 'my-lambda-function-name'
         lambda_region: 'us-east-1'
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
