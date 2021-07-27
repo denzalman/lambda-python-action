@@ -14,7 +14,7 @@ inputs:
   lambda_layer_arn:
     description: Lambda layer's ARN for dependencies
     required: true
-  lambda_name:
+  lambda_function_name:
     description: Lambda function name
     required: true
 runs:
