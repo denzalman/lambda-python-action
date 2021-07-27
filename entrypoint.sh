@@ -21,7 +21,7 @@ rm -rf python
 ######
 
 echo "Publishing dependencies layer..."
-response=$(aws lambda publish-layer-version --layer-name "${INPUT_LAMBDA_LAYER_ARN}" --zip-file fileb://python.zip) --compatible-runtimes python3.8
+response=$(aws lambda publish-layer-version --compatible-runtimes python3.8 --layer-name "${INPUT_LAMBDA_LAYER_ARN}" --zip-file fileb://python.zip)
 VERSION=$(echo $response | jq '.Version')
 rm python.zip
 
