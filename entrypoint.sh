@@ -10,8 +10,8 @@ echo "OK"
 ######
 
 echo "Installing dependencies..."
-mkdir dependencies > /dev/null 2>&1
-pip install --target=python -r "${INPUT_REQUIREMENTS_TXT}" > /dev/null 2>&1
+mkdir -p python/lib/python3.8/site-packages > /dev/null 2>&1
+pip install -t ./python/lib/python3.8/site-packages -r "${INPUT_REQUIREMENTS_TXT}" > /dev/null 2>&1
 echo "OK"
 
 ######
