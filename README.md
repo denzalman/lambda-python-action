@@ -10,10 +10,12 @@ Action deploys code from the repo to the AWS Lambda function, and installs/zips/
 
 ## Inputs
 
-  - *`lambda_layer_arn`* The ARN of the Lambda layer for dependencies. (required)
+  - *`lambda_layer_arn`* The ARN of the Lambda layer for dependencies. (optional)
   - *`lambda_function_name`* The Lambda function name. (required)
   - *`requirements_txt`* The name for the requirements.txt file. (Defaults is `requirements.txt`)
   - *`lambda_region`* Lambda function region name (Default is `us-east-1`)
+
+Note, that if `lambda_layer_arn` is not defined - only lambda code will be deployed, without dependencies. Useful during lambda development, but dependencies never change. See example for more details.
 
 ## Environment variables
 ### AWS Credentials
@@ -25,23 +27,53 @@ It's used by `awscli` for deploy code to AWS.
 Below you can find minimal policy requirements for these credentials. Also see example how to use github secrets for secrets transition. **Don't commit working AWS credentials** into your repo even for private one! Use only secrets for this purpose.
 
 ## Example action code:
+
+### Deploy lambda + layers with dependencies:
 ```yaml
-name: deploy-lambda
+name: Deploy lambda with updated dependencies layer
+
 on:
   push:
     branches:
       - master
+    paths:
+      - 'requirements.txt'
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@master
     - name: Deploy code to Lambda
       uses: denzalman/lambda-python-action@v1.0.7
       with:
-        lambda_layer_arn: 'arn:aws:lambda:us-east-1:123456789012:layer:lambda-layer'
-        lambda_function_name: 'my-lambda-function-name'
+        lambda_layer_arn: 'arn:aws:lambda:us-east-1:<AWS_ACCOUNT_ID>:layer:<lambda_layer_name>'
+        lambda_function_name: 'lambda_function_name'
+        lambda_region: 'us-east-1'
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
+
+### Deploy only new lambda code, without ependency layer:
+```yaml
+name: Deploy lambda code
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '!requirements.txt'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Deploy code to Lambda
+      uses: denzalman/lambda-python-action@v1.0.7
+      with:
+        lambda_function_name: 'lambda_function_name'
         lambda_region: 'us-east-1'
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -49,7 +81,6 @@ jobs:
 ```
 
 ## AWS Policy
-
 Minimal AWS credentials policy needed for the action credentials: 
 
 ```json
@@ -61,11 +92,11 @@ Minimal AWS credentials policy needed for the action credentials:
       "Action": [
         "s3:PutObject",
         "iam:ListRoles",
-        "lambda:UpdateFunctionCode",
-        "lambda:CreateFunction",
-        "lambda:UpdateFunctionConfiguration"
+        "lambda:*"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:lambda:*:<AWS_ACCOUNT_ID>:function:<lambda_function_name>*"
+      ]
     }
   ]
 }
