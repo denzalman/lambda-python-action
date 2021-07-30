@@ -38,6 +38,6 @@ aws lambda update-function-code --function-name "${INPUT_LAMBDA_FUNCTION_NAME}" 
 echo "OK"
 
 ### Deploy dependencies if lambda layer arn was defined in action call
-[ ! -z "${INPUT_LAMBDA_LAYER_ARN}" ] && deploy_lambda_dependencies() || echo "Dependencies was ignored!"
+[ ! -z "${INPUT_LAMBDA_LAYER_ARN}" ] && deploy_lambda_dependencies || echo "Dependencies was ignored!"
 
 echo "${INPUT_LAMBDA_FUNCTION_NAME} function was deployed successfully."
