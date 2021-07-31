@@ -23,7 +23,8 @@ deploy_lambda_dependencies () {
 
     echo "Updating lambda layer version..."
     aws lambda update-function-configuration --function-name "${INPUT_LAMBDA_FUNCTION_NAME}" --layers "${INPUT_LAMBDA_LAYER_ARN}:${VERSION}" > /dev/null 2>&1
-    echo "OK"
+    echo "OK\n"
+    echo "Depencencies was deployed successfully"
 }
 
 ############## Main part
@@ -37,7 +38,11 @@ zip -r lambda.zip . -x \*.git\* > /dev/null 2>&1
 aws lambda update-function-code --function-name "${INPUT_LAMBDA_FUNCTION_NAME}" --zip-file fileb://lambda.zip > /dev/null 2>&1
 echo "OK"
 
-### Deploy dependencies if lambda layer arn was defined in action call
-[ ! -z "${INPUT_LAMBDA_LAYER_ARN}" ] && deploy_lambda_dependencies || echo "Dependencies was ignored!"
+### Deploy dependencies if requirements.txt was changed last commit 
+### and INPUT_LAMBDA_LAYER_ARN was defined in action call
+[ ! -z "${INPUT_LAMBDA_LAYER_ARN}" ] && \
+git diff HEAD^ HEAD --name-only | grep -E "(${INPUT_REQUIREMENTS_TXT})" > /dev/null && \
+deploy_lambda_dependencies || \
+echo "Dependencies wasn't deployed."
 
 echo "${INPUT_LAMBDA_FUNCTION_NAME} function was deployed successfully."
