@@ -6,7 +6,7 @@ deploy_lambda_dependencies () {
 
     echo "Installing dependencies..."
     mkdir -p python/lib/python3.8/site-packages > /dev/null 2>&1
-    pip install -t ./python/lib/python3.8/site-packages -r "${INPUT_REQUIREMENTS_TXT}" > /dev/null 2>&1
+    pip install -t ./python/lib/python3.8/site-packages -r "${INPUT_REQUIREMENTS_TXT}" --platform manylinux2014_x86_64 --implementation cp --python-version 3.8 --only-binary=:all: --upgrade > /dev/null 2>&1
     echo "OK"
 
     echo "Zipping dependencies..."
